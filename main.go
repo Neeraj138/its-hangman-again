@@ -31,7 +31,7 @@ func getWordFromLine(line []byte) string {
 // if you are using a different dataset, modify the below function accordingly
 // this function should always return the slice of words for hangman
 func getHangmanWords() []string {
-	fileInput, err := os.Open("./hangman2.txt")
+	fileInput, err := os.Open("./words/hangman2.txt")
 
 	if err != nil {
 		panic(err)
@@ -121,7 +121,7 @@ func printWordState(word string, guessedLetters map[rune]bool) {
 			fmt.Printf("_ ")
 		}
 	}
-	fmt.Printf("\n\n")
+	fmt.Printf("\n\n\n")
 }
 
 func main() {
@@ -132,11 +132,12 @@ func main() {
 	var hangmanState int8 = -1
 	var noOfMatches int8 = 0
 	noOfUnqChars := getUnqCharsCount(wordToGuess)
+	guessesOrdered := []string{}
 
-	fmt.Println("Start by entering an English alphabet:")
 	printWordState(wordToGuess, guessedLetters)
 
 	for {
+		fmt.Print("Enter an English alphabet: ")
 		userInput, err := userInputReader.ReadString('\n')
 		if err != nil {
 			panic(err)
@@ -159,9 +160,11 @@ func main() {
 			fmt.Printf("Try a new letter. \n\n")
 		} else {
 			guessedLetters[currGuess] = true
+			guessesOrdered = append(guessesOrdered, string(currGuess))
 			hangmanState, noOfMatches = updateGameState(wordToGuess, currGuess, hangmanState, noOfMatches)
 		}
 
+		fmt.Println("Guesses till now:", guessesOrdered)
 		printWordState(wordToGuess, guessedLetters)
 
 		if hangmanState >= 8 {
